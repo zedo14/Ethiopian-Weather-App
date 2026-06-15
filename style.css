@@ -1,0 +1,126 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #0a0e1a, #1a1a2e);
+    color: white;
+    min-height: 100vh;
+}
+
+.container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+
+/* ናቭባር */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+    background: rgba(0,0,0,0.3);
+    position: sticky;
+    top: 0;
+    z-index: 900;
+}
+.logo { font-size: 1.5rem; font-weight: bold; background: linear-gradient(135deg, #078930, #fcdd09, #da121a); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.nav-buttons button {
+    background: rgba(255,255,255,0.1);
+    border: none;
+    color: white;
+    padding: 8px 15px;
+    margin-left: 8px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+/* ፍለጋ */
+.hero { text-align: center; padding: 50px 20px; }
+.hero h1 { font-size: 2rem; margin-bottom: 10px; }
+.search-box {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin: 30px 0;
+    flex-wrap: wrap;
+}
+.search-box input {
+    padding: 12px 20px;
+    width: 280px;
+    border: none;
+    border-radius: 30px;
+    background: rgba(255,255,255,0.1);
+    color: white;
+}
+.search-box button {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+}
+#searchBtn { background: #078930; color: white; }
+#locationBtn { background: rgba(255,255,255,0.2); color: white; }
+
+/* ፈጣን ከተሞች */
+.quick-cities { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.quick-cities button {
+    background: rgba(255,255,255,0.1);
+    border: none;
+    color: white;
+    padding: 6px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+}
+
+/* ካርዶች */
+.weather-card, .forecast-card {
+    background: rgba(255,255,255,0.05);
+    border-radius: 20px;
+    padding: 25px;
+    margin: 20px 0;
+}
+.cities-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+}
+.city-tile {
+    background: rgba(255,255,255,0.05);
+    border-radius: 15px;
+    padding: 15px;
+    text-align: center;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+.city-tile:hover {
+    background: rgba(255,255,255,0.1);
+    transform: translateY(-3px);
+}
+
+/* ጭነት ማያ */
+.loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #0a0e1a;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+}
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(255,255,255,0.1);
+    border-top-color: #078930;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+footer { text-align: center; padding: 30px; opacity: 0.7; margin-top: 40px;}
+
+@media (max-width: 768px) {
+    .hero h1 { font-size: 1.5rem; }
+    .search-box input { width: 100%; }
+}

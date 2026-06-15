@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ethiopian Airlines Weather Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="loading-screen" id="loadingScreen">
+    <div class="spinner"></div>
+    <p>Booting Dashboard Simulation Mode...</p>
+</div>
+
+<nav class="navbar">
+    <div class="logo">✈️ ET Weather</div>
+    <div class="nav-buttons">
+        <button id="langBtn">አማርኛ</button>
+        <button id="unitBtn">°C</button>
+    </div>
+</nav>
+
+<main class="container">
+    <section class="hero">
+        <h1>✈️ Ethiopian Airlines<br>Weather Dashboard</h1>
+        <p style="opacity:0.8; margin-top:5px">Local Fleet Meteorological Forecast System</p>
+        
+        <div class="search-box">
+            <input type="text" id="cityInput" placeholder="Search city...">
+            <button id="searchBtn">🔍 Search</button>
+            <button id="locationBtn">📍 My Location</button>
+        </div>
+
+        <div class="quick-cities">
+            <button onclick="searchCity('Addis Ababa')">Addis Ababa</button>
+            <button onclick="searchCity('Dire Dawa')">Dire Dawa</button>
+            <button onclick="searchCity('Bahir Dar')">Bahir Dar</button>
+            <button onclick="searchCity('Hawassa')">Hawassa</button>
+        </div>
+    </section>
+
+    <div class="weather-card">
+        <div id="weatherEmpty" style="text-align:center; padding:40px">
+            <div style="font-size:3rem">🌍</div>
+            <h3>Search a city to see weather</h3>
+        </div>
+        <div id="weatherContent" style="display:none;"></div>
+    </div>
+
+    <div class="forecast-card" id="forecastCard" style="display:none;">
+        <h3 id="forecastTitle" style="text-align:center; margin-bottom:10px">📅 5-Day Forecast</h3>
+        <div id="forecastScroll"></div>
+    </div>
+
+    <section style="margin-top:40px">
+        <h2 id="overviewHeading" style="margin-bottom:15px">🏙️ Ethiopian Cities Overview</h2>
+        <div id="citiesGrid" class="cities-grid"></div>
+    </section>
+</main>
+
+<footer>
+    <p>Ethiopian Airlines Offline Weather System | Powered by Mock Data Environment</p>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
