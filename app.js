@@ -52,7 +52,10 @@ const COPY = {
         visualDetail: "Wind, visibility, pressure and route risk monitored in real time.",
         distanceFromHub: "Distance from Bole",
         distanceFromYou: "Distance from you",
-        creator: "Prepared by"
+        creator: "Prepared by",
+        globalSearch: "Worldwide search",
+        footerNote: "Global aviation weather dashboard for cities, countries, and coordinates.",
+        selectedPlace: "Selected location"
     },
     am: {
         langButton: "EN",
@@ -91,7 +94,10 @@ const COPY = {
         visualDetail: "ነፋስ፣ እይታ፣ ግፊት እና የመስመር ስጋት በቀጥታ ይከታተላሉ።",
         distanceFromHub: "ከቦሌ ያለው ርቀት",
         distanceFromYou: "ከእርስዎ ያለው ርቀት",
-        creator: "አዘጋጅ"
+        creator: "አዘጋጅ",
+        globalSearch: "ዓለም አቀፍ ፍለጋ",
+        footerNote: "ለከተሞች፣ ለሀገሮች እና ለcoordinates የሚሰራ ዓለም አቀፍ የአቪዬሽን አየር ሁኔታ dashboard።",
+        selectedPlace: "የተመረጠ ቦታ"
     }
 };
 
@@ -152,6 +158,23 @@ function distanceMetric(place) {
         label: state.userCoords ? text("distanceFromYou") : text("distanceFromHub"),
         value: `${Math.round(distanceKm(origin, place)).toLocaleString()} km`
     };
+}
+
+function normalizeText(value) {
+    return String(value || "")
+        .trim()
+        .toLowerCase()
+        .replace(/[^\p{L}\p{N}\s,-.]/gu, " ")
+        .replace(/\s+/g, " ");
+}
+
+function parseCoordinates(query) {
+    const match = query.trim().match(/^(-?\d+(?:\.\d+)?)\s*[, ]\s*(-?\d+(?:\.\d+)?)$/);
+    if (!match) return null;
+    const lat = Number(match[1]);
+    const lon = Number(match[2]);
+    if (Number.isNaN(lat) || Number.isNaN(lon) || Math.abs(lat) > 90 || Math.abs(lon) > 180) return null;
+    return { lat, lon };
 }
 
 function weatherText(code) {
@@ -385,27 +408,59 @@ async function hydrateStationTemps() {
 }
 
 function findLocalPlace(query) {
-    const normalized = query.trim().toLowerCase();
+    const normalized = normalizeText(query);
     return AIRPORTS.find((airport) => {
-        return airport.name.toLowerCase() === normalized ||
+        const haystack = normalizeText(`${airport.name} ${airport.am} ${airport.code} ${airport.airport} Ethiopia`);
+        return normalizeText(airport.name) === normalized ||
             airport.am === query.trim() ||
-            airport.code.toLowerCase() === normalized ||
-            airport.airport.toLowerCase().includes(normalized);
+            normalizeText(airport.code) === normalized ||
+            haystack.includes(normalized) ||
+            normalized.includes(normalizeText(airport.name));
     });
 }
 
-async function geocodePlace(query) {
-    const params = new URLSearchParams({ name: query, count: "1", language: "en", format: "json" });
-    const response = await fetch(`${GEOCODE_API}?${params.toString()}`);
+async function fetchGeocodeCandidates(searchTerm) {
+    const cleaned = normalizeText(searchTerm).replace(/,/g, " ");
+    if (!cleaned) return [];
+    const params = new URLSearchParams({ name: cleaned, count: "10", language: "en", format: "json" });
+    const response = await fetch(`${GEOCODE_API}?${params.toString()}`, { cache: "no-store" });
     if (!response.ok) throw new Error("geocode failed");
     const data = await response.json();
-    const result = data.results?.[0];
+    return data.results || [];
+}
+
+async function geocodePlace(query) {
+    const cleaned = normalizeText(query).replace(/,/g, " ");
+    const firstSegment = normalizeText(query.split(",")[0] || "");
+    const firstTwoWords = cleaned.split(" ").slice(0, 2).join(" ");
+    const attempts = [...new Set([cleaned, firstSegment, firstTwoWords].filter(Boolean))];
+    let results = [];
+
+    for (const attempt of attempts) {
+        results = await fetchGeocodeCandidates(attempt);
+        if (results.length) break;
+    }
+
+    const queryTokens = new Set(cleaned.split(" ").filter(Boolean));
+    const result = results
+        .map((item) => {
+            const textValue = normalizeText(`${item.name} ${item.admin1} ${item.admin2} ${item.country} ${item.country_code}`);
+            let score = 0;
+            queryTokens.forEach((token) => {
+                if (textValue.includes(token)) score += 2;
+            });
+            if (normalizeText(item.name) === cleaned) score += 8;
+            if (normalizeText(`${item.name} ${item.country}`) === cleaned) score += 10;
+            return { item, score };
+        })
+        .sort((a, b) => b.score - a.score || (b.item.population || 0) - (a.item.population || 0))[0]?.item;
     if (!result) return null;
+    const region = [result.admin1, result.country].filter(Boolean).join(", ");
     return {
         name: result.name,
         am: result.name,
         code: result.country_code || "WX",
-        airport: `${result.admin1 || result.country || "Selected location"}`,
+        airport: region || text("selectedPlace"),
         lat: result.latitude,
         lon: result.longitude,
         fallbackTemp: 24
@@ -426,6 +481,20 @@ async function loadPlace(place, options = {}) {
 async function searchCity(query) {
     const cleaned = query.trim();
     if (!cleaned) return;
+
+    const coordinates = parseCoordinates(cleaned);
+    if (coordinates) {
+        await loadPlace({
+            name: `${coordinates.lat.toFixed(3)}, ${coordinates.lon.toFixed(3)}`,
+            am: `${coordinates.lat.toFixed(3)}, ${coordinates.lon.toFixed(3)}`,
+            code: "GPS",
+            airport: text("selectedPlace"),
+            lat: coordinates.lat,
+            lon: coordinates.lon,
+            fallbackTemp: 24
+        });
+        return;
+    }
 
     const local = findLocalPlace(cleaned);
     if (local) {
@@ -495,6 +564,8 @@ function updateCopy() {
     $("#visualCondition").textContent = text("visualCondition");
     $("#visualDetail").textContent = text("visualDetail");
     $("#creatorLabel").textContent = text("creator");
+    $("#globalSearchLabel").textContent = text("globalSearch");
+    $("#footerNote").textContent = text("footerNote");
 
     if (!state.latestReport) {
         $("#weatherEmpty").innerHTML = `
