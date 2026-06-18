@@ -24,9 +24,22 @@ body {
     min-height: 100vh;
     color: var(--ink);
     background:
-        linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(247, 249, 252, 0.98)),
-        url("https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=1800&q=80") center top / cover fixed;
+        linear-gradient(110deg, rgba(6, 16, 30, 0.92) 0%, rgba(9, 27, 45, 0.70) 34%, rgba(247, 249, 252, 0.84) 72%, rgba(247, 249, 252, 0.98) 100%),
+        url("https://images.unsplash.com/photo-1556388158-158ea5ccacbd?auto=format&fit=crop&w=2200&q=85") center top / cover fixed;
     font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+        linear-gradient(rgba(255, 255, 255, 0.055) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+    background-size: 88px 88px;
+    mask-image: linear-gradient(90deg, black, transparent 78%);
 }
 
 button,
@@ -52,7 +65,11 @@ button {
     align-items: center;
     justify-content: space-between;
     gap: 16px;
-    padding: 12px 0;
+    margin-bottom: 6px;
+    padding: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 8px;
+    background: rgba(8, 18, 32, 0.58);
     backdrop-filter: blur(18px);
 }
 
@@ -60,7 +77,7 @@ button {
     display: inline-flex;
     align-items: center;
     gap: 12px;
-    color: var(--ink);
+    color: #fff;
     text-decoration: none;
 }
 
@@ -83,7 +100,7 @@ button {
 
 .brand small {
     margin-top: 2px;
-    color: var(--muted);
+    color: rgba(255, 255, 255, 0.72);
     font-size: 0.82rem;
 }
 
@@ -95,10 +112,11 @@ button {
 .icon-button {
     width: 42px;
     height: 42px;
-    border: 1px solid var(--line);
+    border: 1px solid rgba(255, 255, 255, 0.28);
     border-radius: 8px;
-    color: var(--ink);
-    background: rgba(255, 255, 255, 0.88);
+    color: #fff;
+    background: rgba(8, 18, 32, 0.62);
+    backdrop-filter: blur(14px);
     cursor: pointer;
     font-weight: 800;
 }
@@ -108,17 +126,26 @@ button {
 .ops-panel,
 .forecast-panel,
 .stations-section {
-    border: 1px solid rgba(217, 224, 234, 0.88);
+    border: 1px solid rgba(255, 255, 255, 0.48);
     border-radius: 8px;
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.92);
     box-shadow: var(--shadow);
+    backdrop-filter: blur(18px);
 }
 
 .control-panel {
     display: grid;
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) minmax(340px, 0.72fr);
+    align-items: stretch;
     gap: 24px;
     padding: 30px;
+    overflow: hidden;
+}
+
+.control-content {
+    display: grid;
+    align-content: center;
+    gap: 24px;
 }
 
 .intro {
@@ -144,7 +171,7 @@ p {
 h1 {
     max-width: 760px;
     margin-bottom: 12px;
-    font-size: clamp(2rem, 5vw, 4.3rem);
+    font-size: clamp(2rem, 5vw, 4.05rem);
     line-height: 0.98;
     letter-spacing: 0;
 }
@@ -220,6 +247,151 @@ h2 {
 .airport-button span {
     color: var(--muted);
     font-weight: 700;
+}
+
+.hero-visual {
+    position: relative;
+    min-height: 430px;
+    overflow: hidden;
+    border-radius: 8px;
+    color: #fff;
+    background:
+        linear-gradient(180deg, rgba(8, 18, 32, 0.04), rgba(8, 18, 32, 0.86)),
+        url("https://images.unsplash.com/photo-1540962351504-03099e0a754b?auto=format&fit=crop&w=1200&q=80") center / cover;
+    isolation: isolate;
+}
+
+.hero-visual::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+        linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+        linear-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+    background-size: 54px 54px;
+    opacity: 0.42;
+}
+
+.hero-visual::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: -120px;
+    width: 420px;
+    height: 420px;
+    border: 1px solid rgba(255, 255, 255, 0.24);
+    border-radius: 50%;
+    transform: translateX(-50%);
+}
+
+.visual-topline,
+.visual-metrics,
+.runway-card {
+    position: absolute;
+    z-index: 2;
+}
+
+.visual-topline {
+    top: 18px;
+    left: 18px;
+    right: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    font-size: 0.8rem;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.visual-topline span,
+.visual-metrics span {
+    padding: 7px 9px;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    border-radius: 6px;
+    background: rgba(8, 18, 32, 0.48);
+}
+
+.runway-card {
+    left: 18px;
+    right: 18px;
+    bottom: 18px;
+    padding: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    border-radius: 8px;
+    background: rgba(8, 18, 32, 0.68);
+    backdrop-filter: blur(16px);
+}
+
+.runway-card span,
+.runway-card strong,
+.runway-card small {
+    display: block;
+}
+
+.runway-card span {
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 0.78rem;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.runway-card strong {
+    margin-top: 6px;
+    font-size: 1.45rem;
+}
+
+.runway-card small {
+    max-width: 340px;
+    margin-top: 8px;
+    color: rgba(255, 255, 255, 0.76);
+    line-height: 1.45;
+}
+
+.radar-sweep {
+    position: absolute;
+    right: -54px;
+    top: 86px;
+    width: 260px;
+    height: 260px;
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    border-radius: 50%;
+    background:
+        radial-gradient(circle, transparent 0 28%, rgba(255, 255, 255, 0.14) 28.5% 29%, transparent 29.5% 48%, rgba(255, 255, 255, 0.13) 48.5% 49%, transparent 49.5%),
+        conic-gradient(from 210deg, rgba(7, 137, 48, 0.72), rgba(226, 171, 18, 0.08) 22%, transparent 32%);
+}
+
+.route-thread {
+    position: absolute;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(226, 171, 18, 0.95), transparent);
+    transform-origin: left center;
+}
+
+.route-thread-one {
+    left: 72px;
+    top: 172px;
+    width: 260px;
+    transform: rotate(-18deg);
+}
+
+.route-thread-two {
+    left: 112px;
+    top: 230px;
+    width: 210px;
+    transform: rotate(22deg);
+}
+
+.visual-metrics {
+    left: 18px;
+    top: 72px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    max-width: 260px;
+    font-size: 0.72rem;
+    font-weight: 900;
 }
 
 .dashboard-grid {
@@ -479,6 +651,24 @@ h2 {
     transform: translateY(0);
 }
 
+.creator-footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 18px;
+    padding: 14px 16px;
+    border: 1px solid rgba(255, 255, 255, 0.24);
+    border-radius: 8px;
+    color: rgba(255, 255, 255, 0.84);
+    background: rgba(8, 18, 32, 0.68);
+    backdrop-filter: blur(16px);
+}
+
+.creator-footer strong {
+    color: #fff;
+}
+
 .sr-only {
     position: absolute;
     width: 1px;
@@ -492,9 +682,14 @@ h2 {
 }
 
 @media (max-width: 900px) {
+    .control-panel,
     .dashboard-grid,
     .weather-hero {
         grid-template-columns: 1fr;
+    }
+
+    .hero-visual {
+        min-height: 340px;
     }
 
     .metric-grid {
@@ -518,6 +713,10 @@ h2 {
     .forecast-panel,
     .stations-section {
         padding: 16px;
+    }
+
+    .hero-visual {
+        min-height: 310px;
     }
 
     .search-form {

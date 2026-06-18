@@ -45,7 +45,14 @@ const COPY = {
         offline: "Offline estimate",
         loading: "Loading live weather...",
         notFound: "I could not find that city. Try Addis Ababa, Hawassa, or Bahir Dar.",
-        locationDenied: "Location was not available, so Addis Ababa is shown instead."
+        locationDenied: "Location was not available, so Addis Ababa is shown instead.",
+        visualStatus: "Live operations",
+        visualHub: "Bole International",
+        visualCondition: "Weather watch active",
+        visualDetail: "Wind, visibility, pressure and route risk monitored in real time.",
+        distanceFromHub: "Distance from Bole",
+        distanceFromYou: "Distance from you",
+        creator: "Prepared by"
     },
     am: {
         langButton: "EN",
@@ -77,7 +84,14 @@ const COPY = {
         offline: "ግምታዊ መረጃ",
         loading: "የቀጥታ አየር መረጃ በመጫን ላይ...",
         notFound: "ያንን ከተማ ማግኘት አልቻልኩም። አዲስ አበባ፣ ሐዋሳ ወይም ባሕር ዳር ይሞክሩ።",
-        locationDenied: "አካባቢዎ አልተገኘም፤ በመሆኑም አዲስ አበባ ታይቷል።"
+        locationDenied: "አካባቢዎ አልተገኘም፤ በመሆኑም አዲስ አበባ ታይቷል።",
+        visualStatus: "የቀጥታ ኦፕሬሽን",
+        visualHub: "ቦሌ አለም አቀፍ",
+        visualCondition: "የአየር ክትትል ንቁ ነው",
+        visualDetail: "ነፋስ፣ እይታ፣ ግፊት እና የመስመር ስጋት በቀጥታ ይከታተላሉ።",
+        distanceFromHub: "ከቦሌ ያለው ርቀት",
+        distanceFromYou: "ከእርስዎ ያለው ርቀት",
+        creator: "አዘጋጅ"
     }
 };
 
@@ -85,7 +99,8 @@ let state = {
     lang: localStorage.getItem("et-weather-lang") || "en",
     unit: localStorage.getItem("et-weather-unit") || "celsius",
     activePlace: AIRPORTS[0],
-    latestReport: null
+    latestReport: null,
+    userCoords: null
 };
 
 const $ = (selector) => document.querySelector(selector);
@@ -117,6 +132,26 @@ function kmh(value) {
 function km(value) {
     if (value === null || value === undefined || Number.isNaN(value)) return "--";
     return `${Math.round(value / 1000)} km`;
+}
+
+function distanceKm(from, to) {
+    const earthRadius = 6371;
+    const toRad = (degrees) => degrees * Math.PI / 180;
+    const dLat = toRad(to.lat - from.lat);
+    const dLon = toRad(to.lon - from.lon);
+    const lat1 = toRad(from.lat);
+    const lat2 = toRad(to.lat);
+    const a = Math.sin(dLat / 2) ** 2 +
+        Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon / 2) ** 2;
+    return earthRadius * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+function distanceMetric(place) {
+    const origin = state.userCoords || AIRPORTS[0];
+    return {
+        label: state.userCoords ? text("distanceFromYou") : text("distanceFromHub"),
+        value: `${Math.round(distanceKm(origin, place)).toLocaleString()} km`
+    };
 }
 
 function weatherText(code) {
@@ -249,6 +284,7 @@ function renderWeather(place, report) {
     const risk = riskFrom(current, report.daily?.wind_speed_10m_max?.[0]);
     const source = report.offline ? text("offline") : text("live");
     const updated = current.time ? new Date(current.time).toLocaleString(state.lang === "am" ? "am-ET" : "en-US") : "--";
+    const distance = distanceMetric(place);
 
     $("#weatherEmpty").hidden = true;
     $("#weatherContent").hidden = false;
@@ -268,6 +304,7 @@ function renderWeather(place, report) {
             ${metric(text("wind"), kmh(current.wind_speed_10m))}
             ${metric(text("gust"), kmh(current.wind_gusts_10m))}
             ${metric(text("visibility"), km(current.visibility))}
+            ${metric(distance.label, distance.value)}
             ${metric(text("pressure"), `${Math.round(current.surface_pressure || 0)} hPa`)}
             ${metric(text("cloud"), `${Math.round(current.cloud_cover || 0)}%`)}
             ${metric(text("precipitation"), `${current.precipitation || 0} mm`)}
@@ -428,7 +465,13 @@ function useLocation() {
     }
 
     navigator.geolocation.getCurrentPosition(
-        (position) => loadPlace(nearestAirport(position.coords.latitude, position.coords.longitude)),
+        (position) => {
+            state.userCoords = {
+                lat: position.coords.latitude,
+                lon: position.coords.longitude
+            };
+            loadPlace(nearestAirport(position.coords.latitude, position.coords.longitude));
+        },
         () => {
             showToast(text("locationDenied"));
             loadPlace(AIRPORTS[0]);
@@ -447,6 +490,11 @@ function updateCopy() {
     $("#forecastTitle").textContent = text("forecast");
     $("#stationsTitle").textContent = text("stations");
     $("#stationsNote").textContent = text("note");
+    $("#visualStatus").textContent = text("visualStatus");
+    $("#visualHub").textContent = text("visualHub");
+    $("#visualCondition").textContent = text("visualCondition");
+    $("#visualDetail").textContent = text("visualDetail");
+    $("#creatorLabel").textContent = text("creator");
 
     if (!state.latestReport) {
         $("#weatherEmpty").innerHTML = `

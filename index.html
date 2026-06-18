@@ -26,20 +26,42 @@
 
         <main>
             <section class="control-panel" aria-labelledby="dashboardTitle">
-                <div class="intro">
-                    <p class="eyebrow">Flight operations weather desk</p>
-                    <h1 id="dashboardTitle">Weather intelligence for Ethiopian routes</h1>
-                    <p id="dashboardSubtitle">Search a city or choose an Ethiopian airport to view live conditions, a 7-day forecast, and aviation risk guidance.</p>
+                <div class="control-content">
+                    <div class="intro">
+                        <p class="eyebrow">Flight operations weather desk</p>
+                        <h1 id="dashboardTitle">Weather intelligence for Ethiopian routes</h1>
+                        <p id="dashboardSubtitle">Search a city or choose an Ethiopian airport to view live conditions, a 7-day forecast, and aviation risk guidance.</p>
+                    </div>
+
+                    <form class="search-form" id="searchForm">
+                        <label class="sr-only" for="cityInput">Search city</label>
+                        <input id="cityInput" type="search" autocomplete="off" placeholder="Search city or airport, e.g. Addis Ababa">
+                        <button class="primary-button" id="searchBtn" type="submit">Search</button>
+                        <button class="secondary-button" id="locationBtn" type="button">Use my area</button>
+                    </form>
+
+                    <div class="airport-strip" id="quickCities" aria-label="Popular Ethiopian airports"></div>
                 </div>
 
-                <form class="search-form" id="searchForm">
-                    <label class="sr-only" for="cityInput">Search city</label>
-                    <input id="cityInput" type="search" autocomplete="off" placeholder="Search city or airport, e.g. Addis Ababa">
-                    <button class="primary-button" id="searchBtn" type="submit">Search</button>
-                    <button class="secondary-button" id="locationBtn" type="button">Use my area</button>
-                </form>
-
-                <div class="airport-strip" id="quickCities" aria-label="Popular Ethiopian airports"></div>
+                <aside class="hero-visual" aria-label="Live Ethiopian flight operations visual">
+                    <div class="visual-topline">
+                        <span id="visualStatus">Live operations</span>
+                        <strong>HAAB</strong>
+                    </div>
+                    <div class="runway-card">
+                        <span id="visualHub">Bole International</span>
+                        <strong id="visualCondition">Weather watch active</strong>
+                        <small id="visualDetail">Wind, visibility, pressure and route risk monitored in real time.</small>
+                    </div>
+                    <div class="radar-sweep" aria-hidden="true"></div>
+                    <div class="route-thread route-thread-one" aria-hidden="true"></div>
+                    <div class="route-thread route-thread-two" aria-hidden="true"></div>
+                    <div class="visual-metrics" aria-hidden="true">
+                        <span>VIS 10KM</span>
+                        <span>QNH 1012</span>
+                        <span>RWY 07R</span>
+                    </div>
+                </aside>
             </section>
 
             <section class="dashboard-grid" aria-live="polite">
@@ -81,6 +103,11 @@
                 <div class="stations-grid" id="stationsGrid"></div>
             </section>
         </main>
+
+        <footer class="creator-footer">
+            <span id="creatorLabel">Prepared by</span>
+            <strong>Zewdu Zemedu</strong>
+        </footer>
     </div>
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
