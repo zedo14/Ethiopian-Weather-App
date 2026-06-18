@@ -3,66 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ethiopian Airlines Weather Dashboard</title>
+    <meta name="description" content="Live Ethiopian aviation weather dashboard with airport weather, forecasts, and operational risk guidance.">
+    <title>Ethiopian Aviation Weather</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div class="app-shell">
+        <header class="topbar">
+            <a class="brand" href="#" aria-label="Ethiopian Aviation Weather home">
+                <span class="brand-mark" aria-hidden="true">ET</span>
+                <span>
+                    <strong>Ethiopian Aviation Weather</strong>
+                    <small>Live airport forecast dashboard</small>
+                </span>
+            </a>
 
-<div class="loading-screen" id="loadingScreen">
-    <div class="spinner"></div>
-    <p>Booting Dashboard Simulation Mode...</p>
-</div>
+            <div class="top-actions" aria-label="Dashboard controls">
+                <button class="icon-button" id="langBtn" type="button" title="Switch language">AM</button>
+                <button class="icon-button" id="unitBtn" type="button" title="Switch temperature unit">C</button>
+            </div>
+        </header>
 
-<nav class="navbar">
-    <div class="logo">✈️ ET Weather</div>
-    <div class="nav-buttons">
-        <button id="langBtn">አማርኛ</button>
-        <button id="unitBtn">°C</button>
+        <main>
+            <section class="control-panel" aria-labelledby="dashboardTitle">
+                <div class="intro">
+                    <p class="eyebrow">Flight operations weather desk</p>
+                    <h1 id="dashboardTitle">Weather intelligence for Ethiopian routes</h1>
+                    <p id="dashboardSubtitle">Search a city or choose an Ethiopian airport to view live conditions, a 7-day forecast, and aviation risk guidance.</p>
+                </div>
+
+                <form class="search-form" id="searchForm">
+                    <label class="sr-only" for="cityInput">Search city</label>
+                    <input id="cityInput" type="search" autocomplete="off" placeholder="Search city or airport, e.g. Addis Ababa">
+                    <button class="primary-button" id="searchBtn" type="submit">Search</button>
+                    <button class="secondary-button" id="locationBtn" type="button">Use my area</button>
+                </form>
+
+                <div class="airport-strip" id="quickCities" aria-label="Popular Ethiopian airports"></div>
+            </section>
+
+            <section class="dashboard-grid" aria-live="polite">
+                <article class="weather-panel" id="weatherPanel">
+                    <div class="empty-state" id="weatherEmpty">
+                        <span class="empty-icon" aria-hidden="true">ET</span>
+                        <h2>Choose an airport to begin</h2>
+                        <p>Live weather loads from Open-Meteo. If the network is unavailable, the app keeps a practical offline estimate ready.</p>
+                    </div>
+
+                    <div class="weather-content" id="weatherContent" hidden></div>
+                </article>
+
+                <aside class="ops-panel" aria-labelledby="opsTitle">
+                    <div class="panel-heading">
+                        <p class="eyebrow">Operations snapshot</p>
+                        <h2 id="opsTitle">Ready routes</h2>
+                    </div>
+                    <div class="ops-list" id="opsList"></div>
+                </aside>
+            </section>
+
+            <section class="forecast-panel" id="forecastPanel" hidden aria-labelledby="forecastTitle">
+                <div class="panel-heading">
+                    <p class="eyebrow">Planning window</p>
+                    <h2 id="forecastTitle">7-day forecast</h2>
+                </div>
+                <div class="forecast-scroll" id="forecastScroll"></div>
+            </section>
+
+            <section class="stations-section" aria-labelledby="stationsTitle">
+                <div class="section-header">
+                    <div>
+                        <p class="eyebrow">Ethiopian network</p>
+                        <h2 id="stationsTitle">Airport weather board</h2>
+                    </div>
+                    <p id="stationsNote">Tap a station to open full conditions.</p>
+                </div>
+                <div class="stations-grid" id="stationsGrid"></div>
+            </section>
+        </main>
     </div>
-</nav>
 
-<main class="container">
-    <section class="hero">
-        <h1>✈️ Ethiopian Airlines<br>Weather Dashboard</h1>
-        <p style="opacity:0.8; margin-top:5px">Local Fleet Meteorological Forecast System</p>
-        
-        <div class="search-box">
-            <input type="text" id="cityInput" placeholder="Search city...">
-            <button id="searchBtn">🔍 Search</button>
-            <button id="locationBtn">📍 My Location</button>
-        </div>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-        <div class="quick-cities">
-            <button onclick="searchCity('Addis Ababa')">Addis Ababa</button>
-            <button onclick="searchCity('Dire Dawa')">Dire Dawa</button>
-            <button onclick="searchCity('Bahir Dar')">Bahir Dar</button>
-            <button onclick="searchCity('Hawassa')">Hawassa</button>
-        </div>
-    </section>
-
-    <div class="weather-card">
-        <div id="weatherEmpty" style="text-align:center; padding:40px">
-            <div style="font-size:3rem">🌍</div>
-            <h3>Search a city to see weather</h3>
-        </div>
-        <div id="weatherContent" style="display:none;"></div>
-    </div>
-
-    <div class="forecast-card" id="forecastCard" style="display:none;">
-        <h3 id="forecastTitle" style="text-align:center; margin-bottom:10px">📅 5-Day Forecast</h3>
-        <div id="forecastScroll"></div>
-    </div>
-
-    <section style="margin-top:40px">
-        <h2 id="overviewHeading" style="margin-bottom:15px">🏙️ Ethiopian Cities Overview</h2>
-        <div id="citiesGrid" class="cities-grid"></div>
-    </section>
-</main>
-
-<footer>
-    <p>Ethiopian Airlines Offline Weather System | Powered by Mock Data Environment</p>
-</footer>
-
-<script src="app.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>
